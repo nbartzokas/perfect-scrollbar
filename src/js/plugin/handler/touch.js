@@ -61,6 +61,10 @@ function bindTouchHandler(element, i, supportsTouch, supportsIePointer) {
     }
   }
   function shouldHandle(e) {
+    if ( e.target.className && /^ps-scrollbar/.test(e.target.className) ){
+      console.log('no');
+      return false;
+    }
     if (e.targetTouches && e.targetTouches.length === 1) {
       return true;
     }

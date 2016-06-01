@@ -33,9 +33,18 @@ function bindMouseScrollXHandler(element, i) {
     e.preventDefault();
   };
 
+  var touchMoveHandler = function (e) {
+    if ( e.target.className && ! /^ps-scrollbar/.test(e.target.className) ){ return; }
+    updateScrollTop(e.touches[0].pageY - currentPageY);
+    updateGeometry(element);
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
   var mouseUpHandler = function () {
     _.stopScrolling(element, 'x');
     i.event.unbind(i.ownerDocument, 'mousemove', mouseMoveHandler);
+    i.event.unbind(i.ownerDocument, 'touchmove', touchMoveHandler);
   };
 
   i.event.bind(i.scrollbarX, 'mousedown', function (e) {
@@ -49,6 +58,21 @@ function bindMouseScrollXHandler(element, i) {
     e.stopPropagation();
     e.preventDefault();
   });
+
+  i.event.bind(i.scrollbarX, 'touchstart', function (e) {
+    if ( e.target.className && ! /^ps-scrollbar/.test(e.target.className) ){ return; }
+
+    currentPageX = e.touches[0].pageX;
+    currentLeft = _.toInt(dom.css(i.scrollbarX, 'left')) * i.railXRatio;
+    _.startScrolling(element, 'x');
+
+    i.event.bind(i.ownerDocument, 'touchmove', touchMoveHandler);
+    i.event.once(i.ownerDocument, 'touchend', mouseUpHandler);
+
+    e.stopPropagation();
+    e.preventDefault();
+  });
+
 }
 
 function bindMouseScrollYHandler(element, i) {
@@ -78,9 +102,18 @@ function bindMouseScrollYHandler(element, i) {
     e.preventDefault();
   };
 
+  var touchMoveHandler = function (e) {
+    if ( e.target.className && ! /^ps-scrollbar/.test(e.target.className) ){ return; }
+    updateScrollTop(e.touches[0].pageY - currentPageY);
+    updateGeometry(element);
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
   var mouseUpHandler = function () {
     _.stopScrolling(element, 'y');
     i.event.unbind(i.ownerDocument, 'mousemove', mouseMoveHandler);
+    i.event.unbind(i.ownerDocument, 'touchmove', touchMoveHandler);
   };
 
   i.event.bind(i.scrollbarY, 'mousedown', function (e) {
@@ -94,6 +127,21 @@ function bindMouseScrollYHandler(element, i) {
     e.stopPropagation();
     e.preventDefault();
   });
+
+  i.event.bind(i.scrollbarY, 'touchstart', function (e) {
+    if ( e.target.className && ! /^ps-scrollbar/.test(e.target.className) ){ return; }
+
+    currentPageY = e.touches[0].pageY;
+    currentTop = _.toInt(dom.css(i.scrollbarY, 'top')) * i.railYRatio;
+    _.startScrolling(element, 'y');
+
+    i.event.bind(i.ownerDocument, 'touchmove', touchMoveHandler);
+    i.event.once(i.ownerDocument, 'touchend', mouseUpHandler);
+
+    e.stopPropagation();
+    e.preventDefault();
+  });
+
 }
 
 module.exports = function (element) {
